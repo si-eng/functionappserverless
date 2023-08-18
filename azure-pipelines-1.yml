@@ -82,7 +82,7 @@ stages:
         deploy:
           steps:
           - task: AzureFunctionApp@1
-            displayName: 'Azure Functions App Deploy: $(FUNCTION_APP_NAME)'
+            displayName: 'Azure Functions App Deploy: $(functionAppName)'
             inputs:
               azureSubscription: 'DevOps (899f8574-cccc-4d2a-af0d-b5caa6e72f89)'
               appType: functionAppLinux
