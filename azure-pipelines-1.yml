@@ -1,8 +1,3 @@
-# Node.js Function App to Linux on Azure
-# Build a Node.js function app and deploy it to Azure as a Linux function app.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
-
 trigger:
 - main
 
@@ -21,25 +16,33 @@ variables:
   vmImageName: 'ubuntu-latest'
 
 stages:
-- stage: Build
+- stage: SONARQUBE 
+  displayName: SONARQUBE 
+  jobs:  
+  - job: Sonarqube
+    displayName: Sonarqube
+    steps:
+    - script: |
+          echo "SONARQUBE SLOT"
+
+- stage: BUILD
   displayName: Build stage
   jobs:
   - job: Build
     displayName: Build
     pool:
-      vmImage: $(vmImageName)
+      vmImage: ubuntu-latest
 
     steps:
     - task: NodeTool@0
       inputs:
-        versionSpec: '10.x'
+        versionSpec: '18.x'
       displayName: 'Install Node.js'
 
 
     - script: |
         npm install
-        npm run build --if-present
-        npm run test --if-present
+        npm run build
       displayName: 'Prepare binaries'
 
     - task: ArchiveFiles@2
@@ -50,28 +53,38 @@ stages:
         archiveType: zip
         archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
         replaceExistingArchive: true
-
     - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
       artifact: drop
 
+
+- stage: TEST 
+  displayName: TEST 
+  jobs:  
+  - job: Test
+    displayName: Test
+    steps:
+    - script: |
+         echo "TEST CASES"
+
+
 - stage: Deploy
   displayName: Deploy stage
-  dependsOn: Build
+  dependsOn: Test
   condition: succeeded()
   jobs:
   - deployment: Deploy
     displayName: Deploy
-    environment: $(environmentName)
+    environment: 'dev'
     pool:
-      vmImage: $(vmImageName)
+      vmImage: ubuntu-latest
     strategy:
       runOnce:
         deploy:
           steps:
           - task: AzureFunctionApp@1
-            displayName: 'Azure Functions App Deploy: pratice1235'
+            displayName: 'Azure Functions App Deploy: $(FUNCTION_APP_NAME)'
             inputs:
-              azureSubscription: '$(azureSubscription)'
+              azureSubscription: 'DevOps (899f8574-cccc-4d2a-af0d-b5caa6e72f89)'
               appType: functionAppLinux
-              appName: $(functionAppName)
+              appName: $(FUNCTION_APP_NAME)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
