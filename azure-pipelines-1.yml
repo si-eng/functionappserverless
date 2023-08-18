@@ -86,5 +86,5 @@ stages:
             inputs:
               azureSubscription: 'DevOps (899f8574-cccc-4d2a-af0d-b5caa6e72f89)'
               appType: functionAppLinux
-              appName: $(FUNCTION_APP_NAME)
+              appName: $(functionAppName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
