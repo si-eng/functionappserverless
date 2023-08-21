@@ -7,10 +7,10 @@ variables:
   azureSubscription: 'e2d4e6c1-471f-435e-b659-fa2bbfa8af60'
 
   # Function app name
-  functionAppName: 'pratice1235'
+  functionAppName: 'practice12345j'
 
   # Environment name
-  environmentName: 'pratice1235'
+  environmentName: 'practice12345j'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
